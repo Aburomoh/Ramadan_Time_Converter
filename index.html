@@ -46,22 +46,25 @@
     }
     .input-group {
       display: flex;
-      justify-content: center;
+      flex-direction: column;
+      align-items: center;
       gap: 10px;
       margin-bottom: 15px;
-      flex-wrap: wrap;
     }
-    select {
-      padding: 12px 20px;
-      width: 100%;
-      max-width: 80px;
+    /* Slider styling */
+    #timeSlider {
+      width: 80%;
+      max-width: 400px;
+    }
+    /* Manual input boxes */
+    input[type="text"] {
+      padding: 10px;
+      width: 80px;
       box-sizing: border-box;
       border: 2px solid #ccc;
       border-radius: 4px;
       font-size: 1.1em;
       text-align: center;
-      margin-bottom: 10px;
-      background: #fff;
     }
     button {
       background-color: #5563DE;
@@ -88,7 +91,7 @@
       border-radius: 5px;
       box-shadow: 0 3px 6px rgba(0,0,0,0.2);
     }
-    /* Image container: force side-by-side with no wrapping */
+    /* Image container: always display wheels side by side */
     .image-container {
       display: flex;
       flex-wrap: nowrap;
@@ -132,7 +135,7 @@
       border-radius: 50%;
       object-fit: cover;
     }
-    /* Inner image rotates according to minutes, centered */
+    /* Inner image rotates based on minutes, centered */
     .rotating-inner {
       position: absolute;
       top: 50%;
@@ -191,11 +194,16 @@
 <body>
   <div class="converter-container">
     <h1>Ramadan Time Converter</h1>
-    <p class="description-top">This is a time converter between the Normal working hours and Ramadan working hours.</p>
-    <p>Enter a time from the original schedule:</p>
+    <p class="description-top">This is a time converter between Normal working hours and Ramadan working hours.</p>
+    <p>Set a time from the original schedule:</p>
     <div class="input-group">
-      <select id="inputHours"></select>
-      <select id="inputMinutes"></select>
+      <!-- The slider represents time in minutes from 08:00 (480) to 20:00 (1200) -->
+      <input type="range" id="timeSlider" min="480" max="1200" step="5" value="480">
+      <!-- Manual input boxes -->
+      <div>
+        <input type="text" id="inputHours" placeholder="HH">
+        <input type="text" id="inputMinutes" placeholder="MM">
+      </div>
     </div>
     <button onclick="convertTime()">Convert</button>
     <p id="result"></p>
@@ -224,37 +232,40 @@
   </footer>
   
   <script>
-    // Populate the hours and minutes dropdowns
-    function populateSelects() {
-      var hoursSelect = document.getElementById("inputHours");
-      // Populate hours from 8 to 20 (inclusive)
-      for (var i = 8; i <= 20; i++) {
-        var option = document.createElement("option");
-        option.value = i;
-        option.text = (i < 10 ? "0" + i : i);
-        hoursSelect.appendChild(option);
-      }
-      
-      var minutesSelect = document.getElementById("inputMinutes");
-      // Populate minutes in multiples of 5 (0, 5, 10, …, 55)
-      for (var i = 0; i < 60; i += 5) {
-        var option = document.createElement("option");
-        option.value = i;
-        option.text = (i < 10 ? "0" + i : i);
-        minutesSelect.appendChild(option);
+    // When the slider is moved, update the text boxes and convert
+    function updateTimeFromSlider() {
+      var slider = document.getElementById("timeSlider");
+      var totalMinutes = parseInt(slider.value, 10);
+      var hours = Math.floor(totalMinutes / 60);
+      var minutes = totalMinutes % 60;
+      document.getElementById("inputHours").value = (hours < 10 ? "0" + hours : hours);
+      document.getElementById("inputMinutes").value = (minutes < 10 ? "0" + minutes : minutes);
+      convertTime();
+    }
+    
+    // When the manual input changes, update the slider accordingly
+    function updateSliderFromInputs() {
+      var hours = parseInt(document.getElementById("inputHours").value, 10);
+      var minutes = parseInt(document.getElementById("inputMinutes").value, 10);
+      if (!isNaN(hours) && !isNaN(minutes)) {
+        var totalMinutes = hours * 60 + minutes;
+        // Clamp value between 480 and 1200
+        totalMinutes = Math.max(480, Math.min(1200, totalMinutes));
+        document.getElementById("timeSlider").value = totalMinutes;
+        convertTime();
       }
     }
     
     // Outer image rotation:
-    // The dial represents times from 08:00 (480 min) to 20:00 (1200 min).
-    // Rotation angle = -((timeInMinutes - 480) / 720 * 360) = -((timeInMinutes - 480) / 2) degrees.
+    // The dial represents times from 08:00 (480) to 20:00 (1200).
+    // Rotation angle = -((time - 480) / 720 * 360) = -((time - 480) / 2) degrees.
     function updateOuterImage(imageId, timeInMinutes) {
       const image = document.getElementById(imageId);
       const rotationAngle = -((timeInMinutes - 480) / 2);
       image.style.transform = "rotate(" + rotationAngle + "deg)";
     }
     
-    // Inner image rotation based solely on minutes (6° per minute).
+    // Inner image rotates based solely on minutes (6° per minute).
     function updateInnerImage(imageId, minutes) {
       const image = document.getElementById(imageId);
       const rotationAngle = -(minutes * 6);
@@ -263,32 +274,31 @@
     
     // Conversion function: t_new = 540 + (t_old - 480) * (43/63)
     function convertTime() {
-      const hours = parseInt(document.getElementById("inputHours").value, 10);
-      const minutes = parseInt(document.getElementById("inputMinutes").value, 10);
-      
-      // Calculate original time (in minutes after midnight)
-      const t_old = hours * 60 + minutes;
-      
-      // Apply conversion equation
-      const t_new = 540 + (t_old - 480) * (43 / 63);
-      const t_new_int = Math.round(t_new);
-      
-      // Format converted time
-      const new_hours = Math.floor(t_new_int / 60);
-      const new_minutes = t_new_int % 60;
-      const formatted_hours = new_hours.toString().padStart(2, '0');
-      const formatted_minutes = new_minutes.toString().padStart(2, '0');
-      
+      var hours = parseInt(document.getElementById("inputHours").value, 10);
+      var minutes = parseInt(document.getElementById("inputMinutes").value, 10);
+      var t_old = hours * 60 + minutes;
+      var t_new = 540 + (t_old - 480) * (43 / 63);
+      var t_new_int = Math.round(t_new);
+      var new_hours = Math.floor(t_new_int / 60);
+      var new_minutes = t_new_int % 60;
+      var formatted_hours = new_hours.toString().padStart(2, '0');
+      var formatted_minutes = new_minutes.toString().padStart(2, '0');
       document.getElementById("result").innerText = "Converted time: " + formatted_hours + ":" + formatted_minutes;
       
-      // Update wheel rotations:
+      // Update the wheels:
       updateOuterImage("originalOuter", t_old);
       updateOuterImage("convertedOuter", t_new_int);
       updateInnerImage("originalInner", minutes);
       updateInnerImage("convertedInner", new_minutes);
     }
     
-    window.onload = populateSelects;
+    // Set up event listeners
+    document.getElementById("timeSlider").addEventListener("input", updateTimeFromSlider);
+    document.getElementById("inputHours").addEventListener("change", updateSliderFromInputs);
+    document.getElementById("inputMinutes").addEventListener("change", updateSliderFromInputs);
+    
+    // Initialize when page loads
+    window.onload = updateTimeFromSlider;
   </script>
 </body>
 </html>
