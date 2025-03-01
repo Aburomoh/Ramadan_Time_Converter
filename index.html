@@ -2,10 +2,12 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>Work Schedule Converter</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">  
+  <title>Ramadan Time Converter</title>
   <!-- Import Google Fonts for a modern look -->
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
   <style>
+    /* Mobile friendly resets and container */
     body {
       font-family: 'Roboto', sans-serif;
       background: linear-gradient(135deg, #74ABE2, #5563DE);
@@ -22,7 +24,7 @@
       background: #fff;
       border-radius: 15px;
       box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
-      padding: 30px 40px 40px;
+      padding: 30px 20px 40px;
       max-width: 500px;
       width: 100%;
       text-align: center;
@@ -30,8 +32,15 @@
     }
     
     h1 {
-      margin-bottom: 20px;
+      margin-bottom: 10px;
       color: #333;
+      font-size: 1.8em;
+    }
+    
+    .description-top {
+      margin-bottom: 20px;
+      font-size: 1em;
+      color: #666;
     }
     
     p {
@@ -45,9 +54,10 @@
       justify-content: center;
       gap: 10px;
       margin-bottom: 20px;
+      flex-wrap: wrap;
     }
     
-    input[type="text"] {
+    select {
       padding: 12px 20px;
       width: 100%;
       max-width: 80px;
@@ -56,6 +66,9 @@
       border-radius: 4px;
       font-size: 1.1em;
       text-align: center;
+      margin-bottom: 10px;
+      background: #fff;
+      color: #333; /* Ensures text is visible */
     }
     
     button {
@@ -77,14 +90,19 @@
     
     #result {
       margin-top: 20px;
-      font-size: 1.2em;
+      font-size: 1.4em;
       font-weight: bold;
-      color: #555;
+      color: #fff;
+      background: #3498db;
+      padding: 10px;
+      border-radius: 5px;
+      box-shadow: 0 3px 6px rgba(0,0,0,0.2);
     }
     
     /* Container for the two wheels (side by side) */
     .image-container {
       display: flex;
+      flex-wrap: wrap;
       justify-content: space-around;
       width: 100%;
       max-width: 500px;
@@ -96,6 +114,7 @@
       width: 220px;
       height: 220px;
       text-align: center;
+      margin-bottom: 20px;
     }
     
     /* Fixed pointer above each wheel (points down) */
@@ -146,18 +165,38 @@
     
     .description {
       margin-top: 10px;
+      font-size: 0.95em;
+      color: #333;
+      font-weight: 600;
+    }
+    
+    /* Footer styling */
+    footer {
+      margin-top: 30px;
       font-size: 0.9em;
-      color: #555;
+      color: #fff;
+      text-align: center;
+    }
+    
+    footer a {
+      color: #fff;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    
+    footer a:hover {
+      text-decoration: underline;
     }
   </style>
 </head>
 <body>
   <div class="converter-container">
-    <h1>Work Schedule Converter</h1>
+    <h1>Ramadan Time Converter</h1>
+    <p class="description-top">This is a time converter between the Normal working hours to Ramadan working hours.</p>
     <p>Enter a time from the original schedule:</p>
     <div class="input-group">
-      <input type="text" id="inputHours" placeholder="HH">
-      <input type="text" id="inputMinutes" placeholder="MM">
+      <select id="inputHours"></select>
+      <select id="inputMinutes"></select>
     </div>
     <button onclick="convertTime()">Convert</button>
     <p id="result"></p>
@@ -172,7 +211,7 @@
       <img src="image1.jpg" id="originalOuter" class="rotating-outer" alt="Original Outer">
       <!-- Inner image rotates based on minutes input -->
       <img src="image3.jpg" id="originalInner" class="rotating-inner" alt="Original Inner">
-      <div class="description"><b>Original Time</b></div>
+      <div class="description">Normal Working Time</div>
     </div>
     
     <!-- Converted Time Wheel -->
@@ -182,11 +221,36 @@
       <img src="image1.jpg" id="convertedOuter" class="rotating-outer" alt="Converted Outer">
       <!-- Inner image rotates based on converted minutes -->
       <img src="image2.jpg" id="convertedInner" class="rotating-inner" alt="Converted Inner">
-      <div class="description"><b>Converted Time</b></div>
+      <div class="description">Ramadan Working Time</div>
     </div>
   </div>
   
+  <footer>
+    Made by Mohanad AbuRomoh - <a href="https://github.com/Aburomoh/" target="_blank">GitHub</a>
+  </footer>
+  
   <script>
+    // Populate the hours and minutes select lists
+    function populateSelects() {
+      var hoursSelect = document.getElementById("inputHours");
+      // Populate hours from 8 to 20 (inclusive)
+      for (var i = 8; i <= 20; i++) {
+        var option = document.createElement("option");
+        option.value = i;
+        option.text = (i < 10 ? "0" + i : i);
+        hoursSelect.appendChild(option);
+      }
+      
+      var minutesSelect = document.getElementById("inputMinutes");
+      // Populate minutes from 0 to 59
+      for (var i = 0; i < 60; i++) {
+        var option = document.createElement("option");
+        option.value = i;
+        option.text = (i < 10 ? "0" + i : i);
+        minutesSelect.appendChild(option);
+      }
+    }
+    
     // Outer image rotation:
     // The dial represents times from 08:00 (480 min) to 20:00 (1200 min).
     // Rotation angle: -((timeInMinutes - 480) / 720 * 360) = -((timeInMinutes - 480) / 2) degrees.
@@ -206,21 +270,8 @@
     
     // Conversion function: t_new = 540 + (t_old - 480) * (43/63)
     function convertTime() {
-      const hoursInput = document.getElementById("inputHours").value.trim();
-      const minutesInput = document.getElementById("inputMinutes").value.trim();
-      
-      if (hoursInput === "" || minutesInput === "") {
-        document.getElementById("result").innerText = "Error: Please enter both hours and minutes.";
-        return;
-      }
-      
-      const hours = parseInt(hoursInput, 10);
-      const minutes = parseInt(minutesInput, 10);
-      
-      if (isNaN(hours) || isNaN(minutes) || hours < 0 || minutes < 0 || minutes > 59) {
-        document.getElementById("result").innerText = "Error: Please enter valid numbers for hours and minutes.";
-        return;
-      }
+      const hours = parseInt(document.getElementById("inputHours").value, 10);
+      const minutes = parseInt(document.getElementById("inputMinutes").value, 10);
       
       // Calculate the original time in minutes after midnight
       const t_old = hours * 60 + minutes;
@@ -246,6 +297,9 @@
       updateInnerImage("originalInner", minutes);
       updateInnerImage("convertedInner", new_minutes);
     }
+    
+    // Initialize the select lists once the DOM is loaded
+    window.onload = populateSelects;
   </script>
 </body>
 </html>
