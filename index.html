@@ -23,19 +23,19 @@
       background: #fff;
       border-radius: 15px;
       box-shadow: 0 10px 20px rgba(0,0,0,0.15);
-      padding: 30px 20px 40px;
+      padding: 15px 20px 20px;
       max-width: 500px;
       width: 100%;
       text-align: center;
-      margin-bottom: 30px;
+      margin-bottom: 20px;
     }
     h1 {
-      margin-bottom: 10px;
+      margin-bottom: 5px;
       color: #333;
       font-size: 1.8em;
     }
     .description-top {
-      margin-bottom: 20px;
+      margin-bottom: 10px;
       font-size: 1em;
       color: #666;
     }
@@ -48,7 +48,7 @@
       display: flex;
       justify-content: center;
       gap: 10px;
-      margin-bottom: 20px;
+      margin-bottom: 15px;
       flex-wrap: wrap;
     }
     select {
@@ -191,7 +191,7 @@
 <body>
   <div class="converter-container">
     <h1>Ramadan Time Converter</h1>
-    <p class="description-top">This is a time converter between the Normal working hours to Ramadan working hours.</p>
+    <p class="description-top">This is a time converter between the Normal working hours and Ramadan working hours.</p>
     <p>Enter a time from the original schedule:</p>
     <div class="input-group">
       <select id="inputHours"></select>
@@ -224,9 +224,10 @@
   </footer>
   
   <script>
-    // Populate hour and minute dropdowns
+    // Populate the hours and minutes dropdowns
     function populateSelects() {
       var hoursSelect = document.getElementById("inputHours");
+      // Populate hours from 8 to 20 (inclusive)
       for (var i = 8; i <= 20; i++) {
         var option = document.createElement("option");
         option.value = i;
@@ -235,7 +236,8 @@
       }
       
       var minutesSelect = document.getElementById("inputMinutes");
-      for (var i = 0; i < 60; i++) {
+      // Populate minutes in multiples of 5 (0, 5, 10, …, 55)
+      for (var i = 0; i < 60; i += 5) {
         var option = document.createElement("option");
         option.value = i;
         option.text = (i < 10 ? "0" + i : i);
