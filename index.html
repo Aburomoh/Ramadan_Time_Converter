@@ -7,7 +7,7 @@
   <!-- Import Google Fonts for a modern look -->
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
   <style>
-    /* Mobile friendly resets and container */
+    /* Base Styles */
     body {
       font-family: 'Roboto', sans-serif;
       background: linear-gradient(135deg, #74ABE2, #5563DE);
@@ -19,36 +19,31 @@
       min-height: 100vh;
       color: #333;
     }
-    
     .converter-container {
       background: #fff;
       border-radius: 15px;
-      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.15);
       padding: 30px 20px 40px;
       max-width: 500px;
       width: 100%;
       text-align: center;
       margin-bottom: 30px;
     }
-    
     h1 {
       margin-bottom: 10px;
       color: #333;
       font-size: 1.8em;
     }
-    
     .description-top {
       margin-bottom: 20px;
       font-size: 1em;
       color: #666;
     }
-    
     p {
       margin-bottom: 20px;
       font-size: 1em;
       color: #666;
     }
-    
     .input-group {
       display: flex;
       justify-content: center;
@@ -56,7 +51,6 @@
       margin-bottom: 20px;
       flex-wrap: wrap;
     }
-    
     select {
       padding: 12px 20px;
       width: 100%;
@@ -69,7 +63,6 @@
       margin-bottom: 10px;
       background: #fff;
     }
-    
     button {
       background-color: #5563DE;
       color: white;
@@ -82,11 +75,9 @@
       transition: background-color 0.3s ease;
       width: 100%;
     }
-    
     button:hover {
       background-color: #4353c4;
     }
-    
     #result {
       margin-top: 20px;
       font-size: 1.4em;
@@ -97,8 +88,7 @@
       border-radius: 5px;
       box-shadow: 0 3px 6px rgba(0,0,0,0.2);
     }
-    
-    /* Container for the two wheels (side by side) */
+    /* Image container: force side-by-side with no wrapping */
     .image-container {
       display: flex;
       flex-wrap: nowrap;
@@ -107,7 +97,7 @@
       max-width: 500px;
       margin-top: 30px;
     }
-    
+    /* Keep the image wrapper square */
     .image-wrapper {
       position: relative;
       width: 220px;
@@ -115,7 +105,6 @@
       text-align: center;
       margin-bottom: 20px;
     }
-    
     /* Fixed pointer above each wheel (points down) */
     .fixed-pointer {
       position: absolute;
@@ -129,16 +118,13 @@
       transform: translateX(-50%);
       z-index: 3;
     }
-    
     .pointer-original {
       border-top-color: #e74c3c;
     }
-    
     .pointer-converted {
       border-top-color: #3498db;
     }
-    
-    /* Outer image rotates according to the overall time */
+    /* Outer image rotates according to overall time */
     .rotating-outer {
       width: 220px;
       height: 220px;
@@ -146,9 +132,7 @@
       border-radius: 50%;
       object-fit: cover;
     }
-    
-    /* Inner image rotates according to minutes.
-       Positioned absolutely in the center and slightly smaller. */
+    /* Inner image rotates according to minutes, centered */
     .rotating-inner {
       position: absolute;
       top: 50%;
@@ -161,14 +145,12 @@
       object-fit: cover;
       z-index: 2;
     }
-    
     .description {
       margin-top: 10px;
       font-size: 0.95em;
       color: #333;
       font-weight: 600;
     }
-    
     /* Footer styling */
     footer {
       margin-top: 30px;
@@ -176,31 +158,29 @@
       color: #fff;
       text-align: center;
     }
-    
     footer a {
       color: #fff;
       text-decoration: none;
       font-weight: bold;
     }
-    
     footer a:hover {
       text-decoration: underline;
     }
-    
-    /* Media query to scale down the wheels for small screens */
+    /* Mobile adjustments: force image-wrapper to remain square using viewport units */
     @media (max-width: 500px) {
       .image-wrapper {
-        width: 45%;
-        height: auto;
+        width: 45vw;
+        height: 45vw;
+        max-width: 220px;
+        max-height: 220px;
       }
       .rotating-outer {
         width: 100%;
-        height: auto;
+        height: 100%;
       }
       .rotating-inner {
         width: 70%;
-        height: auto;
-        /* Adjust centering if dimensions change */
+        height: 70%;
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
@@ -223,22 +203,17 @@
   
   <!-- Two wheels displayed side by side -->
   <div class="image-container">
-    <!-- Original Time Wheel -->
+    <!-- Normal Working Time Wheel -->
     <div class="image-wrapper">
       <div class="fixed-pointer pointer-original"></div>
-      <!-- Outer image rotates based on overall original time -->
       <img src="image1.jpg" id="originalOuter" class="rotating-outer" alt="Original Outer">
-      <!-- Inner image rotates based on minutes input -->
       <img src="image3.jpg" id="originalInner" class="rotating-inner" alt="Original Inner">
       <div class="description">Normal Working Time</div>
     </div>
-    
-    <!-- Converted Time Wheel -->
+    <!-- Ramadan Working Time Wheel -->
     <div class="image-wrapper">
       <div class="fixed-pointer pointer-converted"></div>
-      <!-- Outer image rotates based on converted overall time -->
       <img src="image1.jpg" id="convertedOuter" class="rotating-outer" alt="Converted Outer">
-      <!-- Inner image rotates based on converted minutes -->
       <img src="image2.jpg" id="convertedInner" class="rotating-inner" alt="Converted Inner">
       <div class="description">Ramadan Working Time</div>
     </div>
@@ -249,10 +224,9 @@
   </footer>
   
   <script>
-    // Populate the hours and minutes select lists
+    // Populate hour and minute dropdowns
     function populateSelects() {
       var hoursSelect = document.getElementById("inputHours");
-      // Populate hours from 8 to 20 (inclusive)
       for (var i = 8; i <= 20; i++) {
         var option = document.createElement("option");
         option.value = i;
@@ -261,7 +235,6 @@
       }
       
       var minutesSelect = document.getElementById("inputMinutes");
-      // Populate minutes from 0 to 59
       for (var i = 0; i < 60; i++) {
         var option = document.createElement("option");
         option.value = i;
@@ -272,15 +245,14 @@
     
     // Outer image rotation:
     // The dial represents times from 08:00 (480 min) to 20:00 (1200 min).
-    // Rotation angle: -((timeInMinutes - 480) / 720 * 360) = -((timeInMinutes - 480) / 2) degrees.
+    // Rotation angle = -((timeInMinutes - 480) / 720 * 360) = -((timeInMinutes - 480) / 2) degrees.
     function updateOuterImage(imageId, timeInMinutes) {
       const image = document.getElementById(imageId);
       const rotationAngle = -((timeInMinutes - 480) / 2);
       image.style.transform = "rotate(" + rotationAngle + "deg)";
     }
     
-    // Inner image rotation based solely on minutes.
-    // For minutes, a full circle (60 minutes) equals 360°, i.e. 6° per minute.
+    // Inner image rotation based solely on minutes (6° per minute).
     function updateInnerImage(imageId, minutes) {
       const image = document.getElementById(imageId);
       const rotationAngle = -(minutes * 6);
@@ -292,15 +264,14 @@
       const hours = parseInt(document.getElementById("inputHours").value, 10);
       const minutes = parseInt(document.getElementById("inputMinutes").value, 10);
       
-      // Calculate the original time in minutes after midnight
+      // Calculate original time (in minutes after midnight)
       const t_old = hours * 60 + minutes;
       
-      // Apply conversion equation for the new (converted) time:
-      // t_new = 540 + (t_old - 480) * (43/63)
+      // Apply conversion equation
       const t_new = 540 + (t_old - 480) * (43 / 63);
       const t_new_int = Math.round(t_new);
       
-      // Format converted time for display
+      // Format converted time
       const new_hours = Math.floor(t_new_int / 60);
       const new_minutes = t_new_int % 60;
       const formatted_hours = new_hours.toString().padStart(2, '0');
@@ -308,16 +279,13 @@
       
       document.getElementById("result").innerText = "Converted time: " + formatted_hours + ":" + formatted_minutes;
       
-      // Update outer images based on overall time:
+      // Update wheel rotations:
       updateOuterImage("originalOuter", t_old);
       updateOuterImage("convertedOuter", t_new_int);
-      
-      // Update inner images based on minutes:
       updateInnerImage("originalInner", minutes);
       updateInnerImage("convertedInner", new_minutes);
     }
     
-    // Initialize the select lists once the DOM is loaded
     window.onload = populateSelects;
   </script>
 </body>
