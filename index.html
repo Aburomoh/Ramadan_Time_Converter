@@ -232,6 +232,51 @@
   </footer>
   
   <script>
+    // Global object to store previous rotation angles
+    var previousAngles = {};
+
+    // Helper function to update rotation smoothly (for outer images)
+    function updateRotation(imageId, newAngle) {
+      var image = document.getElementById(imageId);
+      var prevAngle = previousAngles[imageId] || newAngle;
+      var delta = newAngle - prevAngle;
+      if (delta > 180) {
+        newAngle -= 360;
+      } else if (delta < -180) {
+        newAngle += 360;
+      }
+      previousAngles[imageId] = newAngle;
+      image.style.transform = "rotate(" + newAngle + "deg)";
+    }
+
+    // Helper function for inner images (preserve translate(-50%, -50%))
+    function updateRotationInner(imageId, newAngle) {
+      var image = document.getElementById(imageId);
+      var prevAngle = previousAngles[imageId] || newAngle;
+      var delta = newAngle - prevAngle;
+      if (delta > 180) {
+        newAngle -= 360;
+      } else if (delta < -180) {
+        newAngle += 360;
+      }
+      previousAngles[imageId] = newAngle;
+      image.style.transform = "translate(-50%, -50%) rotate(" + newAngle + "deg)";
+    }
+    
+    // Outer image rotation:
+    // The dial represents times from 08:00 (480) to 20:00 (1200).
+    // Rotation angle = -((timeInMinutes - 480) / 2) degrees.
+    function updateOuterImage(imageId, timeInMinutes) {
+      var newAngle = -((timeInMinutes - 480) / 2);
+      updateRotation(imageId, newAngle);
+    }
+    
+    // Inner image rotates based solely on minutes (6° per minute).
+    function updateInnerImage(imageId, minutes) {
+      var newAngle = -(minutes * 6);
+      updateRotationInner(imageId, newAngle);
+    }
+    
     // When the slider is moved, update the text boxes and convert
     function updateTimeFromSlider() {
       var slider = document.getElementById("timeSlider");
@@ -254,22 +299,6 @@
         document.getElementById("timeSlider").value = totalMinutes;
         convertTime();
       }
-    }
-    
-    // Outer image rotation:
-    // The dial represents times from 08:00 (480) to 20:00 (1200).
-    // Rotation angle = -((time - 480) / 720 * 360) = -((time - 480) / 2) degrees.
-    function updateOuterImage(imageId, timeInMinutes) {
-      const image = document.getElementById(imageId);
-      const rotationAngle = -((timeInMinutes - 480) / 2);
-      image.style.transform = "rotate(" + rotationAngle + "deg)";
-    }
-    
-    // Inner image rotates based solely on minutes (6° per minute).
-    function updateInnerImage(imageId, minutes) {
-      const image = document.getElementById(imageId);
-      const rotationAngle = -(minutes * 6);
-      image.style.transform = "translate(-50%, -50%) rotate(" + rotationAngle + "deg)";
     }
     
     // Conversion function: t_new = 540 + (t_old - 480) * (43/63)
