@@ -1,114 +1,245 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">  
-  <title>Ramadan Time Converter</title>
-  <!-- Import Google Fonts for a modern look -->
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Ramadan Time Converter — ACM</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
   <style>
-    /* Base Styles */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
     body {
-      font-family: 'Roboto', sans-serif;
-      background: linear-gradient(135deg, #74ABE2, #5563DE);
-      margin: 0;
-      padding: 20px;
+      font-family: 'Poppins', sans-serif;
+      min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
-      min-height: 100vh;
-      color: #333;
+      color: #2c2c2c;
+      background: #0d1b2a;
+      overflow-x: hidden;
     }
-    .converter-container {
-      background: #fff;
-      border-radius: 15px;
-      box-shadow: 0 10px 20px rgba(0,0,0,0.15);
-      padding: 15px 20px 20px;
-      max-width: 500px;
+
+    /* --- Background layers --- */
+    .bg-building {
+      position: fixed;
+      inset: 0;
+      background: url('background (2).png') center bottom / cover no-repeat;
+      opacity: 0.08;
+      z-index: 0;
+      pointer-events: none;
+    }
+    .bg-pattern {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(ellipse at 20% 0%, rgba(198,163,80,0.15) 0%, transparent 60%),
+        radial-gradient(ellipse at 80% 100%, rgba(30,58,95,0.3) 0%, transparent 60%);
+    }
+
+    /* --- Header / Logo bar --- */
+    .top-bar {
+      position: relative;
+      z-index: 1;
       width: 100%;
+      max-width: 560px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 24px 20px 8px;
+    }
+    .top-bar img {
+      height: 52px;
+      width: auto;
+      filter: drop-shadow(0 2px 6px rgba(0,0,0,0.3));
+    }
+    .top-bar .brand {
+      display: flex;
+      flex-direction: column;
+    }
+    .top-bar .brand-title {
+      font-size: 1.05em;
+      font-weight: 700;
+      color: #c6a350;
+      letter-spacing: 0.5px;
+    }
+    .top-bar .brand-sub {
+      font-size: 0.72em;
+      color: rgba(255,255,255,0.55);
+      font-weight: 300;
+    }
+
+    /* --- Main card --- */
+    .converter-container {
+      position: relative;
+      z-index: 1;
+      background: linear-gradient(160deg, #ffffff 0%, #f5f0e6 100%);
+      border-radius: 20px;
+      box-shadow:
+        0 20px 50px rgba(0,0,0,0.35),
+        inset 0 1px 0 rgba(255,255,255,0.8);
+      padding: 28px 28px 24px;
+      max-width: 520px;
+      width: calc(100% - 32px);
       text-align: center;
-      margin-bottom: 20px;
+      margin-top: 8px;
+      border: 1px solid rgba(198,163,80,0.25);
     }
+
     h1 {
-      margin-bottom: 5px;
-      color: #333;
-      font-size: 1.8em;
+      font-size: 1.55em;
+      font-weight: 700;
+      color: #1e3a5f;
+      margin-bottom: 2px;
     }
+    h1 .accent { color: #c6a350; }
+
     .description-top {
+      font-size: 0.85em;
+      color: #7a7a7a;
+      margin-bottom: 18px;
+      line-height: 1.4;
+    }
+
+    label.section-label {
+      display: block;
+      font-size: 0.78em;
+      font-weight: 600;
+      color: #1e3a5f;
+      text-transform: uppercase;
+      letter-spacing: 1px;
       margin-bottom: 10px;
-      font-size: 1em;
-      color: #666;
     }
-    p {
-      margin-bottom: 20px;
-      font-size: 1em;
-      color: #666;
-    }
+
+    /* --- Input area --- */
     .input-group {
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 10px;
-      margin-bottom: 15px;
+      gap: 12px;
+      margin-bottom: 18px;
     }
-    /* Slider styling */
+
+    /* Slider */
     #timeSlider {
-      width: 80%;
-      max-width: 400px;
+      -webkit-appearance: none;
+      appearance: none;
+      width: 88%;
+      height: 6px;
+      border-radius: 3px;
+      background: linear-gradient(90deg, #1e3a5f, #c6a350);
+      outline: none;
     }
-    /* Manual input boxes */
-    input[type="text"] {
-      padding: 10px;
-      width: 80px;
-      box-sizing: border-box;
-      border: 2px solid #ccc;
-      border-radius: 4px;
-      font-size: 1.1em;
-      text-align: center;
-    }
-    button {
-      background-color: #5563DE;
-      color: white;
-      padding: 12px 20px;
-      margin-top: 10px;
-      border: none;
-      border-radius: 4px;
+    #timeSlider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: #c6a350;
+      border: 3px solid #fff;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.25);
       cursor: pointer;
-      font-size: 1.1em;
-      transition: background-color 0.3s ease;
+    }
+    #timeSlider::-moz-range-thumb {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: #c6a350;
+      border: 3px solid #fff;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+      cursor: pointer;
+    }
+
+    /* Time input row */
+    .time-inputs {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .time-inputs input[type="text"] {
+      width: 58px;
+      padding: 8px 4px;
+      border: 2px solid #d4cbb8;
+      border-radius: 10px;
+      font-size: 1.15em;
+      font-family: 'Poppins', sans-serif;
+      font-weight: 600;
+      text-align: center;
+      color: #1e3a5f;
+      background: #faf8f3;
+      transition: border-color 0.2s;
+    }
+    .time-inputs input[type="text"]:focus {
+      outline: none;
+      border-color: #c6a350;
+    }
+    .time-inputs .colon {
+      font-size: 1.4em;
+      font-weight: 700;
+      color: #1e3a5f;
+    }
+
+    /* Convert button */
+    button {
+      background: linear-gradient(135deg, #1e3a5f, #2a5080);
+      color: #fff;
+      padding: 12px 24px;
+      margin-top: 6px;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      font-size: 1em;
+      font-family: 'Poppins', sans-serif;
+      font-weight: 600;
+      letter-spacing: 0.5px;
       width: 100%;
+      transition: all 0.25s ease;
+      box-shadow: 0 4px 14px rgba(30,58,95,0.35);
     }
     button:hover {
-      background-color: #4353c4;
+      background: linear-gradient(135deg, #c6a350, #b8923e);
+      box-shadow: 0 4px 18px rgba(198,163,80,0.4);
     }
+
+    /* Result display */
     #result {
       margin-top: 20px;
-      font-size: 1.4em;
-      font-weight: bold;
+      font-size: 1.5em;
+      font-weight: 700;
       color: #fff;
-      background: #3498db;
-      padding: 10px;
-      border-radius: 5px;
-      box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+      background: linear-gradient(135deg, #1e3a5f, #15304f);
+      padding: 14px 18px;
+      border-radius: 14px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+      letter-spacing: 0.5px;
+      border: 1px solid rgba(198,163,80,0.3);
     }
-    /* Image container: always display wheels side by side */
+    #result .label { font-size: 0.55em; font-weight: 400; opacity: 0.7; display: block; margin-bottom: 2px; }
+    #result .time { color: #c6a350; }
+
+    /* --- Wheels section --- */
+    .wheels-section {
+      position: relative;
+      z-index: 1;
+      max-width: 520px;
+      width: calc(100% - 32px);
+      margin-top: 28px;
+    }
     .image-container {
       display: flex;
       flex-wrap: nowrap;
       justify-content: space-around;
       width: 100%;
-      max-width: 500px;
-      margin-top: 30px;
     }
-    /* Keep the image wrapper square */
     .image-wrapper {
       position: relative;
       width: 220px;
       height: 220px;
       text-align: center;
-      margin-bottom: 20px;
+      margin-bottom: 10px;
     }
-    /* Fixed pointer above each wheel (points down) */
     .fixed-pointer {
       position: absolute;
       top: -10px;
@@ -120,22 +251,19 @@
       border-top: 20px solid;
       transform: translateX(-50%);
       z-index: 3;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
     }
-    .pointer-original {
-      border-top-color: #e74c3c;
-    }
-    .pointer-converted {
-      border-top-color: #3498db;
-    }
-    /* Outer image rotates according to overall time */
+    .pointer-original { border-top-color: #c6a350; }
+    .pointer-converted { border-top-color: #6cb4ee; }
+
     .rotating-outer {
       width: 220px;
       height: 220px;
       transition: transform 0.5s ease-out;
       border-radius: 50%;
       object-fit: cover;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.3);
     }
-    /* Inner image rotates based on minutes, centered */
     .rotating-inner {
       position: absolute;
       top: 50%;
@@ -150,183 +278,200 @@
     }
     .description {
       margin-top: 10px;
-      font-size: 0.95em;
-      color: #333;
+      font-size: 0.82em;
+      color: rgba(255,255,255,0.75);
       font-weight: 600;
+      letter-spacing: 0.5px;
     }
-    /* Footer styling */
+
+    /* --- Footer --- */
     footer {
-      margin-top: 30px;
-      font-size: 0.9em;
-      color: #fff;
+      position: relative;
+      z-index: 1;
+      margin-top: 36px;
+      margin-bottom: 24px;
+      font-size: 0.78em;
+      color: rgba(255,255,255,0.4);
       text-align: center;
     }
     footer a {
-      color: #fff;
+      color: #c6a350;
       text-decoration: none;
-      font-weight: bold;
+      font-weight: 600;
     }
-    footer a:hover {
-      text-decoration: underline;
-    }
-    /* Mobile adjustments: force image-wrapper to remain square using viewport units */
+    footer a:hover { text-decoration: underline; }
+
+    /* --- Responsive --- */
     @media (max-width: 500px) {
+      .converter-container { padding: 22px 18px 20px; }
+      h1 { font-size: 1.3em; }
       .image-wrapper {
-        width: 45vw;
-        height: 45vw;
+        width: 42vw;
+        height: 42vw;
         max-width: 220px;
         max-height: 220px;
       }
-      .rotating-outer {
-        width: 100%;
-        height: 100%;
-      }
+      .rotating-outer { width: 100%; height: 100%; }
       .rotating-inner {
-        width: 70%;
-        height: 70%;
+        width: 68%;
+        height: 68%;
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
       }
+      .top-bar img { height: 40px; }
     }
   </style>
 </head>
 <body>
+  <!-- Background layers -->
+  <div class="bg-building"></div>
+  <div class="bg-pattern"></div>
+
+  <!-- Top bar with logo -->
+  <div class="top-bar">
+    <img src="logo.webp" alt="ACM Logo">
+    <div class="brand">
+      <span class="brand-title">Ramadan Schedule</span>
+      <span class="brand-sub">Time Converter Tool</span>
+    </div>
+  </div>
+
+  <!-- Main converter card -->
   <div class="converter-container">
-    <h1>Ramadan Time Converter</h1>
-    <p class="description-top">This is a time converter between Normal working hours and Ramadan working hours.</p>
-    <p>Set a time from the original schedule:</p>
+    <h1><span class="accent">Ramadan</span> Time Converter</h1>
+    <p class="description-top">Convert between normal working hours and Ramadan working hours.</p>
+
+    <label class="section-label">Original Schedule Time</label>
     <div class="input-group">
-      <!-- The slider represents time in minutes from 08:00 (480) to 20:00 (1200) -->
       <input type="range" id="timeSlider" min="480" max="1200" step="5" value="480">
-      <!-- Manual input boxes -->
-      <div>
+      <div class="time-inputs">
         <input type="text" id="inputHours" placeholder="HH">
+        <span class="colon">:</span>
         <input type="text" id="inputMinutes" placeholder="MM">
       </div>
     </div>
     <button onclick="convertTime()">Convert</button>
-    <p id="result"></p>
+    <div id="result"></div>
   </div>
-  
-  <!-- Two wheels displayed side by side -->
-  <div class="image-container">
-    <!-- Normal Working Time Wheel -->
-    <div class="image-wrapper">
-      <div class="fixed-pointer pointer-original"></div>
-      <img src="image1.jpg" id="originalOuter" class="rotating-outer" alt="Original Outer">
-      <img src="image3.jpg" id="originalInner" class="rotating-inner" alt="Original Inner">
-      <div class="description">Normal Working Time</div>
-    </div>
-    <!-- Ramadan Working Time Wheel -->
-    <div class="image-wrapper">
-      <div class="fixed-pointer pointer-converted"></div>
-      <img src="image1.jpg" id="convertedOuter" class="rotating-outer" alt="Converted Outer">
-      <img src="image2.jpg" id="convertedInner" class="rotating-inner" alt="Converted Inner">
-      <div class="description">Ramadan Working Time</div>
+
+  <!-- Wheels -->
+  <div class="wheels-section">
+    <div class="image-container">
+      <div class="image-wrapper">
+        <div class="fixed-pointer pointer-original"></div>
+        <img src="image1.jpg" id="originalOuter" class="rotating-outer" alt="Original Outer">
+        <img src="image3.jpg" id="originalInner" class="rotating-inner" alt="Original Inner">
+        <div class="description">Normal Working Time</div>
+      </div>
+      <div class="image-wrapper">
+        <div class="fixed-pointer pointer-converted"></div>
+        <img src="image1.jpg" id="convertedOuter" class="rotating-outer" alt="Converted Outer">
+        <img src="image2.jpg" id="convertedInner" class="rotating-inner" alt="Converted Inner">
+        <div class="description">Ramadan Working Time</div>
+      </div>
     </div>
   </div>
-  
+
   <footer>
-    Made by Mohanad AbuRomoh - <a href="https://github.com/Aburomoh/" target="_blank">GitHub</a>
+    Made by Mohanad AbuRomoh — <a href="https://github.com/Aburomoh/" target="_blank">GitHub</a>
   </footer>
-  
+
   <script>
-    // Global object to store previous rotation angles
     var previousAngles = {};
 
-    // Helper function to update rotation smoothly (for outer images)
     function updateRotation(imageId, newAngle) {
       var image = document.getElementById(imageId);
       var prevAngle = previousAngles[imageId] || newAngle;
       var delta = newAngle - prevAngle;
-      if (delta > 180) {
-        newAngle -= 360;
-      } else if (delta < -180) {
-        newAngle += 360;
-      }
+      if (delta > 180) newAngle -= 360;
+      else if (delta < -180) newAngle += 360;
       previousAngles[imageId] = newAngle;
       image.style.transform = "rotate(" + newAngle + "deg)";
     }
 
-    // Helper function for inner images (preserve translate(-50%, -50%))
     function updateRotationInner(imageId, newAngle) {
       var image = document.getElementById(imageId);
       var prevAngle = previousAngles[imageId] || newAngle;
       var delta = newAngle - prevAngle;
-      if (delta > 180) {
-        newAngle -= 360;
-      } else if (delta < -180) {
-        newAngle += 360;
-      }
+      if (delta > 180) newAngle -= 360;
+      else if (delta < -180) newAngle += 360;
       previousAngles[imageId] = newAngle;
       image.style.transform = "translate(-50%, -50%) rotate(" + newAngle + "deg)";
     }
-    
-    // Outer image rotation:
-    // The dial represents times from 08:00 (480) to 20:00 (1200).
-    // Rotation angle = -((timeInMinutes - 480) / 2) degrees.
+
     function updateOuterImage(imageId, timeInMinutes) {
       var newAngle = -((timeInMinutes - 480) / 2);
       updateRotation(imageId, newAngle);
     }
-    
-    // Inner image rotates based solely on minutes (6° per minute).
+
     function updateInnerImage(imageId, minutes) {
       var newAngle = -(minutes * 6);
       updateRotationInner(imageId, newAngle);
     }
-    
-    // When the slider is moved, update the text boxes and convert
+
     function updateTimeFromSlider() {
       var slider = document.getElementById("timeSlider");
       var totalMinutes = parseInt(slider.value, 10);
       var hours = Math.floor(totalMinutes / 60);
       var minutes = totalMinutes % 60;
-      document.getElementById("inputHours").value = (hours < 10 ? "0" + hours : hours);
-      document.getElementById("inputMinutes").value = (minutes < 10 ? "0" + minutes : minutes);
+      document.getElementById("inputHours").value = hours.toString().padStart(2, '0');
+      document.getElementById("inputMinutes").value = minutes.toString().padStart(2, '0');
       convertTime();
     }
-    
-    // When the manual input changes, update the slider accordingly
+
     function updateSliderFromInputs() {
       var hours = parseInt(document.getElementById("inputHours").value, 10);
       var minutes = parseInt(document.getElementById("inputMinutes").value, 10);
       if (!isNaN(hours) && !isNaN(minutes)) {
-        var totalMinutes = hours * 60 + minutes;
-        // Clamp value between 480 and 1200
-        totalMinutes = Math.max(480, Math.min(1200, totalMinutes));
+        var totalMinutes = Math.max(480, Math.min(1200, hours * 60 + minutes));
         document.getElementById("timeSlider").value = totalMinutes;
         convertTime();
       }
     }
-    
-    // Conversion function: t_new = 540 + (t_old - 480) * (43/63)
+
+    // Piecewise linear interpolation with floor (seconds cropped)
+    // Breakpoints from 2026 Ramadan schedule — exact at every known point
+    var BP = [
+      [480,540],[555,590],[570,597],[580,606],[630,635],[645,647],
+      [690,673],[730,701],[765,723],[780,730],[880,796],[900,806],[1050,904]
+    ];
+    function convertMinutes(t) {
+      if (t <= BP[0][0]) return BP[0][1];
+      if (t >= BP[BP.length-1][0]) return BP[BP.length-1][1];
+      for (var i = 0; i < BP.length - 1; i++) {
+        if (t >= BP[i][0] && t <= BP[i+1][0]) {
+          var x0 = BP[i][0], y0 = BP[i][1];
+          var x1 = BP[i+1][0], y1 = BP[i+1][1];
+          return Math.floor(y0 + (t - x0) * (y1 - y0) / (x1 - x0));
+        }
+      }
+      return BP[BP.length-1][1];
+    }
+
     function convertTime() {
       var hours = parseInt(document.getElementById("inputHours").value, 10);
       var minutes = parseInt(document.getElementById("inputMinutes").value, 10);
       var t_old = hours * 60 + minutes;
-      var t_new = 540 + (t_old - 480) * (43 / 63);
-      var t_new_int = Math.round(t_new);
+      var t_new_int = convertMinutes(t_old);
       var new_hours = Math.floor(t_new_int / 60);
       var new_minutes = t_new_int % 60;
       var formatted_hours = new_hours.toString().padStart(2, '0');
       var formatted_minutes = new_minutes.toString().padStart(2, '0');
-      document.getElementById("result").innerText = "Converted time: " + formatted_hours + ":" + formatted_minutes;
-      
-      // Update the wheels:
+      document.getElementById("result").innerHTML =
+        '<span class="label">Ramadan Time</span>' +
+        '<span class="time">' + formatted_hours + ':' + formatted_minutes + '</span>';
+
       updateOuterImage("originalOuter", t_old);
       updateOuterImage("convertedOuter", t_new_int);
       updateInnerImage("originalInner", minutes);
       updateInnerImage("convertedInner", new_minutes);
     }
-    
-    // Set up event listeners
+
     document.getElementById("timeSlider").addEventListener("input", updateTimeFromSlider);
     document.getElementById("inputHours").addEventListener("change", updateSliderFromInputs);
     document.getElementById("inputMinutes").addEventListener("change", updateSliderFromInputs);
-    
-    // Initialize when page loads
+
     window.onload = updateTimeFromSlider;
   </script>
 </body>
