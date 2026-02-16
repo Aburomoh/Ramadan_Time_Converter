@@ -259,70 +259,240 @@
       text-decoration: underline;
     }
 
-    /* --- Wheels section --- */
-    .wheels-section {
+    /* --- Clocks section --- */
+    .clocks-section {
       position: relative;
       z-index: 1;
-      max-width: 520px;
+      max-width: 560px;
       width: calc(100% - 32px);
       margin-top: 28px;
     }
-    .image-container {
+    .clocks-row {
       display: flex;
-      flex-wrap: nowrap;
-      justify-content: space-around;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 36px;
       width: 100%;
     }
-    .image-wrapper {
-      position: relative;
-      width: 220px;
-      height: 220px;
-      text-align: center;
-      margin-bottom: 10px;
+    .clock-unit {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
     }
-    .fixed-pointer {
+    .clock-frame {
+      position: relative;
+      width: 240px;
+      height: 240px;
+    }
+    .clock-frame::before {
+      content: '';
       position: absolute;
-      top: -10px;
+      inset: -6px;
+      border-radius: 50%;
+      border: 2px solid rgba(198,163,80,0.3);
+      pointer-events: none;
+      z-index: 5;
+    }
+    .clock-frame::after {
+      content: '';
+      position: absolute;
+      inset: -12px;
+      border-radius: 50%;
+      border: 1px solid rgba(198,163,80,0.12);
+      pointer-events: none;
+      z-index: 5;
+    }
+    .clock-glow {
+      position: absolute;
+      inset: -20px;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .clock-unit.normal .clock-glow {
+      background: radial-gradient(circle, rgba(30,58,95,0.1) 0%, transparent 70%);
+    }
+    .clock-unit.ramadan .clock-glow {
+      background: radial-gradient(circle, rgba(198,163,80,0.15) 0%, transparent 70%);
+    }
+    .hour-ring {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      overflow: hidden;
+      z-index: 1;
+      box-shadow:
+        0 6px 24px rgba(0,0,0,0.12),
+        inset 0 0 0 1px rgba(255,255,255,0.3);
+      transition: transform 0.5s ease-out;
+    }
+    .hour-ring img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 50%;
+    }
+    .minute-ring {
+      position: absolute;
+      width: 160px;
+      height: 160px;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      border-radius: 50%;
+      overflow: hidden;
+      z-index: 2;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+      transition: transform 0.5s ease-out;
+    }
+    .minute-ring img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 50%;
+    }
+    .center-hub {
+      position: absolute;
+      width: 80px;
+      height: 80px;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      border-radius: 50%;
+      z-index: 3;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    .clock-unit.normal .center-hub {
+      background: radial-gradient(circle at 40% 35%, #e8e4da 0%, #d4cbb8 50%, #b0a48e 100%);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15), inset 0 1px 2px rgba(255,255,255,0.6);
+      width: 70px;
+      height: 70px;
+    }
+    .clock-unit.normal .center-hub .hub-dot {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 40% 35%, #fff 0%, #c6a350 60%, #9a7b2e 100%);
+      box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+    }
+    .clock-unit.ramadan .center-hub {
+      background: radial-gradient(circle, #fffdf5 0%, #f5f0e6 100%);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15), inset 0 1px 2px rgba(255,255,255,0.6), 0 0 20px rgba(198,163,80,0.2);
+    }
+    .clock-unit.ramadan .center-hub img {
+      width: 90%;
+      height: 90%;
+      object-fit: contain;
+    }
+    .clock-hand-container {
+      position: absolute;
+      top: 0;
       left: 50%;
       width: 0;
-      height: 0;
-      border-left: 10px solid transparent;
-      border-right: 10px solid transparent;
-      border-top: 20px solid;
+      height: 50%;
+      transform-origin: bottom center;
+      z-index: 4;
+      pointer-events: none;
+    }
+    .clock-hand {
+      position: absolute;
+      bottom: 0;
+      left: 50%;
       transform: translateX(-50%);
-      z-index: 3;
-      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+      width: 4px;
+      border-radius: 2px 2px 0 0;
     }
-    .pointer-original { border-top-color: #c6a350; }
-    .pointer-converted { border-top-color: #6cb4ee; }
-
-    .rotating-outer {
-      width: 220px;
-      height: 220px;
-      transition: transform 0.5s ease-out;
-      border-radius: 50%;
-      object-fit: cover;
-      box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+    .hand-hour .clock-hand {
+      height: 55px;
     }
-    .rotating-inner {
+    .clock-unit.normal .hand-hour .clock-hand {
+      background: linear-gradient(to top, #1e3a5f, #2a5a8f);
+      box-shadow: 0 0 6px rgba(30,58,95,0.4);
+    }
+    .clock-unit.ramadan .hand-hour .clock-hand {
+      background: linear-gradient(to top, #b8923e, #dcc06a);
+      box-shadow: 0 0 6px rgba(198,163,80,0.5);
+    }
+    .clock-hand::before {
+      content: '';
+      position: absolute;
+      top: -6px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 0;
+      height: 0;
+      border-left: 6px solid transparent;
+      border-right: 6px solid transparent;
+    }
+    .clock-unit.normal .hand-hour .clock-hand::before {
+      border-bottom: 10px solid #1e3a5f;
+    }
+    .clock-unit.ramadan .hand-hour .clock-hand::before {
+      border-bottom: 10px solid #b8923e;
+    }
+    .center-pin {
       position: absolute;
       top: 50%;
       left: 50%;
-      width: 150px;
-      height: 150px;
+      width: 12px;
+      height: 12px;
       transform: translate(-50%, -50%);
-      transition: transform 0.5s ease-out;
       border-radius: 50%;
-      object-fit: cover;
-      z-index: 2;
+      z-index: 6;
     }
-    .description {
-      margin-top: 10px;
-      font-size: 0.82em;
-      color: #5a5245;
+    .clock-unit.normal .center-pin {
+      background: radial-gradient(circle at 40% 35%, #4a7ab5 0%, #1e3a5f 100%);
+      box-shadow: 0 0 4px rgba(30,58,95,0.5);
+    }
+    .clock-unit.ramadan .center-pin {
+      background: radial-gradient(circle at 40% 35%, #dcc06a 0%, #b8923e 100%);
+      box-shadow: 0 0 6px rgba(198,163,80,0.6);
+    }
+    .tick-ring {
+      position: absolute;
+      inset: -3px;
+      border-radius: 50%;
+      z-index: 5;
+      pointer-events: none;
+    }
+    .tick {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      width: 2px;
+      height: 8px;
+      margin-left: -1px;
+      transform-origin: center 123px;
+      border-radius: 1px;
+    }
+    .clock-unit.normal .tick { background: rgba(30,58,95,0.35); }
+    .clock-unit.ramadan .tick { background: rgba(198,163,80,0.4); }
+    .tick.major {
+      width: 3px;
+      height: 12px;
+      margin-left: -1.5px;
+    }
+    .clock-unit.normal .tick.major { background: rgba(30,58,95,0.6); }
+    .clock-unit.ramadan .tick.major { background: rgba(198,163,80,0.65); }
+    .clock-label {
+      font-size: 0.85em;
       font-weight: 600;
       letter-spacing: 0.5px;
+      color: #5a5245;
+      text-align: center;
     }
+    .clock-label .clock-time {
+      display: block;
+      font-size: 1.5em;
+      font-weight: 700;
+      margin-top: 2px;
+    }
+    .clock-unit.normal .clock-label .clock-time { color: #1e3a5f; }
+    .clock-unit.ramadan .clock-label .clock-time { color: #c6a350; }
 
     /* --- Footer --- */
     footer {
@@ -342,24 +512,17 @@
     footer a:hover { text-decoration: underline; }
 
     /* --- Responsive --- */
-    @media (max-width: 500px) {
+    @media (max-width: 540px) {
       .converter-container { padding: 22px 18px 20px; }
       h1 { font-size: 1.3em; }
-      .image-wrapper {
-        width: 42vw;
-        height: 42vw;
-        max-width: 220px;
-        max-height: 220px;
-      }
-      .rotating-outer { width: 100%; height: 100%; }
-      .rotating-inner {
-        width: 68%;
-        height: 68%;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-      }
       .top-bar img { height: 40px; }
+      .clock-frame { width: 180px; height: 180px; }
+      .minute-ring { width: 120px; height: 120px; }
+      .center-hub { width: 60px !important; height: 60px !important; }
+      .tick { height: 6px; transform-origin: center 93px; }
+      .tick.major { height: 9px; }
+      .hand-hour .clock-hand { height: 40px; }
+      .clocks-row { gap: 20px; }
     }
   </style>
 </head>
@@ -396,20 +559,54 @@
     <a href="plot.html" class="how-link">How does the converter work?</a>
   </div>
 
-  <!-- Wheels -->
-  <div class="wheels-section">
-    <div class="image-container">
-      <div class="image-wrapper">
-        <div class="fixed-pointer pointer-original"></div>
-        <img src="image1.jpg" id="originalOuter" class="rotating-outer" alt="Original Outer">
-        <img src="image3.jpg" id="originalInner" class="rotating-inner" alt="Original Inner">
-        <div class="description">Normal Working Time</div>
+  <!-- Clocks -->
+  <div class="clocks-section">
+    <div class="clocks-row">
+      <!-- Normal clock -->
+      <div class="clock-unit normal">
+        <div class="clock-frame">
+          <div class="clock-glow"></div>
+          <div class="tick-ring" id="normalTicks"></div>
+          <div class="hour-ring" id="normalHourRing">
+            <img src="image1.jpg" alt="Hours">
+          </div>
+          <div class="minute-ring" id="normalMinuteRing">
+            <img src="image3.jpg" alt="Minutes">
+          </div>
+          <div class="center-hub"><div class="hub-dot"></div></div>
+          <div class="clock-hand-container hand-hour" id="normalHand">
+            <div class="clock-hand"></div>
+          </div>
+          <div class="center-pin"></div>
+        </div>
+        <div class="clock-label">
+          Normal Working Time
+          <span class="clock-time" id="normalTimeLabel">08:00</span>
+        </div>
       </div>
-      <div class="image-wrapper">
-        <div class="fixed-pointer pointer-converted"></div>
-        <img src="image1.jpg" id="convertedOuter" class="rotating-outer" alt="Converted Outer">
-        <img src="image2.jpg" id="convertedInner" class="rotating-inner" alt="Converted Inner">
-        <div class="description">Ramadan Working Time</div>
+      <!-- Ramadan clock -->
+      <div class="clock-unit ramadan">
+        <div class="clock-frame">
+          <div class="clock-glow"></div>
+          <div class="tick-ring" id="ramadanTicks"></div>
+          <div class="hour-ring" id="ramadanHourRing">
+            <img src="image1.jpg" alt="Hours">
+          </div>
+          <div class="minute-ring" id="ramadanMinuteRing">
+            <img src="image2.jpg" alt="Minutes">
+          </div>
+          <div class="center-hub">
+            <img src="Ramadan Kareem Greeting.webp" alt="Ramadan Kareem">
+          </div>
+          <div class="clock-hand-container hand-hour" id="ramadanHand">
+            <div class="clock-hand"></div>
+          </div>
+          <div class="center-pin"></div>
+        </div>
+        <div class="clock-label">
+          Ramadan Working Time
+          <span class="clock-time" id="ramadanTimeLabel">09:00</span>
+        </div>
       </div>
     </div>
   </div>
@@ -419,56 +616,34 @@
   </footer>
 
   <script>
-    var previousAngles = {};
-
-    function updateRotation(imageId, newAngle) {
-      var image = document.getElementById(imageId);
-      var prevAngle = previousAngles[imageId] || newAngle;
-      var delta = newAngle - prevAngle;
-      if (delta > 180) newAngle -= 360;
-      else if (delta < -180) newAngle += 360;
-      previousAngles[imageId] = newAngle;
-      image.style.transform = "rotate(" + newAngle + "deg)";
-    }
-
-    function updateRotationInner(imageId, newAngle) {
-      var image = document.getElementById(imageId);
-      var prevAngle = previousAngles[imageId] || newAngle;
-      var delta = newAngle - prevAngle;
-      if (delta > 180) newAngle -= 360;
-      else if (delta < -180) newAngle += 360;
-      previousAngles[imageId] = newAngle;
-      image.style.transform = "translate(-50%, -50%) rotate(" + newAngle + "deg)";
-    }
-
-    function updateOuterImage(imageId, timeInMinutes) {
-      var newAngle = -((timeInMinutes - 480) / 2);
-      updateRotation(imageId, newAngle);
-    }
-
-    function updateInnerImage(imageId, minutes) {
-      var newAngle = -(minutes * 6);
-      updateRotationInner(imageId, newAngle);
-    }
-
-    function updateTimeFromSlider() {
-      var slider = document.getElementById("timeSlider");
-      var totalMinutes = parseInt(slider.value, 10);
-      var hours = Math.floor(totalMinutes / 60);
-      var minutes = totalMinutes % 60;
-      document.getElementById("inputHours").value = hours.toString().padStart(2, '0');
-      document.getElementById("inputMinutes").value = minutes.toString().padStart(2, '0');
-      convertTime();
-    }
-
-    function updateSliderFromInputs() {
-      var hours = parseInt(document.getElementById("inputHours").value, 10);
-      var minutes = parseInt(document.getElementById("inputMinutes").value, 10);
-      if (!isNaN(hours) && !isNaN(minutes)) {
-        var totalMinutes = Math.max(480, Math.min(1200, hours * 60 + minutes));
-        document.getElementById("timeSlider").value = totalMinutes;
-        convertTime();
+    // Generate tick marks
+    function createTicks(containerId) {
+      var container = document.getElementById(containerId);
+      for (var i = 0; i < 60; i++) {
+        var tick = document.createElement('div');
+        tick.className = 'tick' + (i % 5 === 0 ? ' major' : '');
+        tick.style.transform = 'rotate(' + (i * 6) + 'deg)';
+        container.appendChild(tick);
       }
+    }
+    createTicks('normalTicks');
+    createTicks('ramadanTicks');
+
+    // Smooth rotation tracking
+    var prevAngles = {};
+    function smoothAngle(id, target) {
+      var prev = prevAngles[id] || target;
+      var delta = target - prev;
+      if (delta > 180) target -= 360;
+      else if (delta < -180) target += 360;
+      prevAngles[id] = target;
+      return target;
+    }
+
+    function fmt(totalMin) {
+      var h = Math.floor(totalMin / 60);
+      var m = totalMin % 60;
+      return (h < 10 ? '0' : '') + h + ':' + (m < 10 ? '0' : '') + m;
     }
 
     // Piecewise linear interpolation with floor (seconds cropped)
@@ -491,23 +666,69 @@
       return BP[BP.length-1][1];
     }
 
+    function updateClocks(origTotal) {
+      var convTotal = convertMinutes(origTotal);
+      var origM = origTotal % 60;
+      var convM = convTotal % 60;
+
+      // Update time labels under clocks
+      document.getElementById('normalTimeLabel').textContent = fmt(origTotal);
+      document.getElementById('ramadanTimeLabel').textContent = fmt(convTotal);
+
+      // Update result display
+      var convH = Math.floor(convTotal / 60);
+      document.getElementById("result").innerHTML =
+        '<span class="label">Ramadan Time</span>' +
+        '<span class="time">' + fmt(convTotal) + '</span>';
+
+      // --- Normal clock ---
+      var nHourAngle = smoothAngle('nH', -((origTotal - 480) / 2));
+      document.getElementById('normalHourRing').style.transform = 'rotate(' + nHourAngle + 'deg)';
+
+      var nMinAngle = smoothAngle('nM', -(origM * 6));
+      document.getElementById('normalMinuteRing').style.transform =
+        'translate(-50%, -50%) rotate(' + nMinAngle + 'deg)';
+
+      document.getElementById('normalHand').style.transform = 'rotate(' + (origM * 6) + 'deg)';
+
+      // --- Ramadan clock ---
+      var rHourAngle = smoothAngle('rH', -((convTotal - 480) / 2));
+      document.getElementById('ramadanHourRing').style.transform = 'rotate(' + rHourAngle + 'deg)';
+
+      var rMinAngle = smoothAngle('rM', -(convM * 6));
+      document.getElementById('ramadanMinuteRing').style.transform =
+        'translate(-50%, -50%) rotate(' + rMinAngle + 'deg)';
+
+      document.getElementById('ramadanHand').style.transform = 'rotate(' + (convM * 6) + 'deg)';
+    }
+
+    function updateTimeFromSlider() {
+      var slider = document.getElementById("timeSlider");
+      var totalMinutes = parseInt(slider.value, 10);
+      var hours = Math.floor(totalMinutes / 60);
+      var minutes = totalMinutes % 60;
+      document.getElementById("inputHours").value = hours.toString().padStart(2, '0');
+      document.getElementById("inputMinutes").value = minutes.toString().padStart(2, '0');
+      updateClocks(totalMinutes);
+    }
+
+    function updateSliderFromInputs() {
+      var hours = parseInt(document.getElementById("inputHours").value, 10);
+      var minutes = parseInt(document.getElementById("inputMinutes").value, 10);
+      if (!isNaN(hours) && !isNaN(minutes)) {
+        var totalMinutes = Math.max(480, Math.min(1200, hours * 60 + minutes));
+        document.getElementById("timeSlider").value = totalMinutes;
+        updateClocks(totalMinutes);
+      }
+    }
+
     function convertTime() {
       var hours = parseInt(document.getElementById("inputHours").value, 10);
       var minutes = parseInt(document.getElementById("inputMinutes").value, 10);
-      var t_old = hours * 60 + minutes;
-      var t_new_int = convertMinutes(t_old);
-      var new_hours = Math.floor(t_new_int / 60);
-      var new_minutes = t_new_int % 60;
-      var formatted_hours = new_hours.toString().padStart(2, '0');
-      var formatted_minutes = new_minutes.toString().padStart(2, '0');
-      document.getElementById("result").innerHTML =
-        '<span class="label">Ramadan Time</span>' +
-        '<span class="time">' + formatted_hours + ':' + formatted_minutes + '</span>';
-
-      updateOuterImage("originalOuter", t_old);
-      updateOuterImage("convertedOuter", t_new_int);
-      updateInnerImage("originalInner", minutes);
-      updateInnerImage("convertedInner", new_minutes);
+      if (!isNaN(hours) && !isNaN(minutes)) {
+        var totalMinutes = hours * 60 + minutes;
+        updateClocks(totalMinutes);
+      }
     }
 
     document.getElementById("timeSlider").addEventListener("input", updateTimeFromSlider);
