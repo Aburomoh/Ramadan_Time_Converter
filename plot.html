@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Conversion Plot</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      background: #f5f0e6;
+    }
+    canvas {
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    }
+  </style>
+</head>
+<body>
+<canvas id="chart" width="720" height="520"></canvas>
+<script>
+  var BP = [
+    [480,540],[555,590],[570,597],[580,606],[630,635],[645,647],
+    [690,673],[730,701],[765,723],[780,730],[880,796],[900,806],
+    [990,863],[1020,882],[1050,904],[1065,913],[1150,967],[1170,980]
+  ];
+
+  var canvas = document.getElementById('chart');
+  var ctx = canvas.getContext('2d');
+  var W = canvas.width, H = canvas.height;
+
+  // Margins
+  var ml = 72, mr = 30, mt = 40, mb = 60;
+  var pw = W - ml - mr, ph = H - mt - mb;
+
+  // Data range
+  var xMin = 480, xMax = 1200;
+  var yMin = 480, yMax = 1020;
+
+  function toX(v) { return ml + (v - xMin) / (xMax - xMin) * pw; }
+  function toY(v) { return mt + ph - (v - yMin) / (yMax - yMin) * ph; }
+  function fmt(m) {
+    var h = Math.floor(m / 60);
+    var mm = m % 60;
+    return (h < 10 ? '0' : '') + h + ':' + (mm < 10 ? '0' : '') + mm;
+  }
+
+  // Grid + axes
+  ctx.fillStyle = '#fff';
+  ctx.fillRect(0, 0, W, H);
+
+  // Horizontal grid lines & Y labels
+  ctx.textAlign = 'right';
+  ctx.textBaseline = 'middle';
+  ctx.font = '11px Segoe UI';
+  for (var y = yMin; y <= yMax; y += 60) {
+    var py = toY(y);
+    ctx.strokeStyle = '#e8e3d8';
+    ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(ml, py); ctx.lineTo(W - mr, py); ctx.stroke();
+    ctx.fillStyle = '#8a7d6b';
+    ctx.fillText(fmt(y), ml - 8, py);
+  }
+
+  // Vertical grid lines & X labels
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'top';
+  for (var x = 480; x <= xMax; x += 60) {
+    var px = toX(x);
+    ctx.strokeStyle = '#e8e3d8';
+    ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(px, mt); ctx.lineTo(px, H - mb); ctx.stroke();
+    ctx.fillStyle = '#8a7d6b';
+    ctx.fillText(fmt(x), px, H - mb + 8);
+  }
+
+  // Reference line (y = x, no change)
+  ctx.setLineDash([6, 4]);
+  ctx.strokeStyle = '#ccc';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.moveTo(toX(Math.max(xMin, yMin)), toY(Math.max(xMin, yMin)));
+  ctx.lineTo(toX(Math.min(xMax, yMax)), toY(Math.min(xMax, yMax)));
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Label the reference line
+  ctx.fillStyle = '#bbb';
+  ctx.font = '10px Segoe UI';
+  ctx.textAlign = 'left';
+  ctx.fillText('y = x (no change)', toX(Math.min(xMax, yMax)) - 100, toY(Math.min(xMax, yMax)) - 14);
+
+  // Interpolated curve (dense)
+  function interp(t) {
+    if (t <= BP[0][0]) return BP[0][1];
+    if (t >= BP[BP.length-1][0]) return BP[BP.length-1][1];
+    for (var i = 0; i < BP.length - 1; i++) {
+      if (t >= BP[i][0] && t <= BP[i+1][0]) {
+        var x0 = BP[i][0], y0 = BP[i][1];
+        var x1 = BP[i+1][0], y1 = BP[i+1][1];
+        return y0 + (t - x0) * (y1 - y0) / (x1 - x0);
+      }
+    }
+    return BP[BP.length-1][1];
+  }
+
+  ctx.strokeStyle = '#1e3a5f';
+  ctx.lineWidth = 2.5;
+  ctx.beginPath();
+  for (var t = xMin; t <= BP[BP.length-1][0]; t += 2) {
+    var v = interp(t);
+    if (t === xMin) ctx.moveTo(toX(t), toY(v));
+    else ctx.lineTo(toX(t), toY(v));
+  }
+  ctx.stroke();
+
+  // Breakpoint dots
+  for (var i = 0; i < BP.length; i++) {
+    var cx = toX(BP[i][0]), cy = toY(BP[i][1]);
+    ctx.beginPath();
+    ctx.arc(cx, cy, 5, 0, Math.PI * 2);
+    ctx.fillStyle = '#c6a350';
+    ctx.fill();
+    ctx.strokeStyle = '#fff';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+  }
+
+  // Axis labels
+  ctx.fillStyle = '#1e3a5f';
+  ctx.font = 'bold 13px Segoe UI';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'top';
+  ctx.fillText('Original Schedule Time', ml + pw / 2, H - 18);
+
+  ctx.save();
+  ctx.translate(16, mt + ph / 2);
+  ctx.rotate(-Math.PI / 2);
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'top';
+  ctx.fillText('Ramadan Time', 0, 0);
+  ctx.restore();
+
+  // Title
+  ctx.fillStyle = '#1e3a5f';
+  ctx.font = 'bold 16px Segoe UI';
+  ctx.textAlign = 'center';
+  ctx.fillText('Schedule Conversion: Original → Ramadan', W / 2, 14);
+</script>
+</body>
+</html>
