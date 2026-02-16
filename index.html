@@ -330,7 +330,7 @@
 
   <!-- Top bar with logo -->
   <div class="top-bar">
-    <img src="logo.webp" alt="ACM Logo">
+    <img src="logo.png" alt="ACM Logo">
     <div class="brand">
       <span class="brand-title">Ramadan Schedule</span>
       <span class="brand-sub">Time Converter Tool</span>
@@ -434,7 +434,8 @@
     // Breakpoints from 2026 Ramadan schedule — exact at every known point
     var BP = [
       [480,540],[555,590],[570,597],[580,606],[630,635],[645,647],
-      [690,673],[730,701],[765,723],[780,730],[880,796],[900,806],[1050,904]
+      [690,673],[730,701],[765,723],[780,730],[880,796],[900,806],
+      [990,863],[1050,904],[1065,913]
     ];
     function convertMinutes(t) {
       if (t <= BP[0][0]) return BP[0][1];
