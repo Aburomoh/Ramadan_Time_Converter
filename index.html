@@ -1,3 +1,25 @@
+<!--
+  2026 Ramadan Schedule — Time Conversion Reference
+  OLD       NEW
+  8:00  →   9:00
+  9:15  →   9:50
+  9:30  →   9:57
+  9:40  →  10:06
+ 10:30  →  10:35
+ 10:45  →  10:47
+ 11:30  →  11:13
+ 12:10  →  11:41
+ 12:45  →  12:03
+ 13:00  →  12:10
+ 14:40  →  13:16
+ 15:00  →  13:26
+ 16:30  →  14:23
+ 17:00  →  14:42
+ 17:30  →  15:04
+ 17:45  →  15:13
+ 19:10  →  16:07
+ 19:30  →  16:20
+-->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -221,6 +243,22 @@
     #result .label { font-size: 0.55em; font-weight: 400; color: #8a7d6b; display: block; margin-bottom: 2px; }
     #result .time { color: #c6a350; }
 
+    /* --- "How it works" link --- */
+    .how-link {
+      display: inline-block;
+      margin-top: 16px;
+      font-size: 0.82em;
+      color: #8a7d6b;
+      text-decoration: none;
+      font-weight: 400;
+      letter-spacing: 0.3px;
+      transition: color 0.2s;
+    }
+    .how-link:hover {
+      color: #c6a350;
+      text-decoration: underline;
+    }
+
     /* --- Wheels section --- */
     .wheels-section {
       position: relative;
@@ -332,7 +370,7 @@
 
   <!-- Top bar with logo -->
   <div class="top-bar">
-    <img src="logo.png" alt="ACM Logo">
+    <img src="logo.webp" alt="ACM Logo">
     <div class="brand">
       <span class="brand-title">Ramadan Schedule</span>
       <span class="brand-sub">Time Converter Tool</span>
@@ -355,6 +393,7 @@
     </div>
     <button onclick="convertTime()">Convert</button>
     <div id="result"></div>
+    <a href="plot.html" class="how-link">How does the converter work?</a>
   </div>
 
   <!-- Wheels -->
